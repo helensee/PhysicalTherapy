@@ -13,10 +13,10 @@ public class TeleportTutorial : MonoBehaviour {
         }
         else if (other.name == "Teleport_Fireball")
         {
-            SceneManager.LoadScene("Scenes/TutorialFireball_Cheryl");
+            SceneManager.LoadScene("Scenes/TutorialFireball");
         } else if (other.name == "Teleport_ShootEarth")
         {
-            SceneManager.LoadScene("Scenes/TutorialShootEarth_Adam");
+            SceneManager.LoadScene("Scenes/TutorialShootEarth");
         }
         else if(other.name == "OutsideCastle")
         {
