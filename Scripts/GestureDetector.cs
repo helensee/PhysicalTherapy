@@ -40,9 +40,25 @@ public class GestureDetector : IDisposable
     /// <summary> Path to the gesture database that was trained with VGB </summary>
     private readonly string liftEarthdb = "LiftEarth.gba";
     private readonly string armSmallLiftdb = "LiftEarth_ArmSmallLift.gba";
+
+    private readonly string militaryPressdb = "MilitaryPress.gbd";
     /// <summary> Name of the discrete gesture in the database that we want to track </summary>
     private readonly string liftEarthGesture = "LiftEarth";
     private readonly string armSmallLiftGesture = "LiftEarth_ArmSmallLift";
+    //-----------
+    private readonly string MP_false1Gesture = "FalseGesture1";
+    //Error 1: Y Shaped Straight Arm
+    private readonly string MP_false2Gesture = "FalseGesture2";
+    //Error 2: Elbows too low/arm too low
+
+    private readonly string MP_Level1Gesture = "Level1";
+    //
+    private readonly string MP_Level2Gesture = "Level2";
+    //
+    private readonly string MP_Level3Gesture = "Level3";
+    //
+
+
     /// <summary> Gesture frame source which should be tied to a body tracking ID </summary>
     private VisualGestureBuilderFrameSource vgbFrameSource = null;
 
@@ -75,32 +91,32 @@ public class GestureDetector : IDisposable
         }
 
         // load the 'Seated' gesture from the gesture database
-        var databasePath = Path.Combine(Application.streamingAssetsPath, this.liftEarthdb);
+        var databasePath = Path.Combine(Application.streamingAssetsPath, this.militaryPressdb);
         using (VisualGestureBuilderDatabase database = VisualGestureBuilderDatabase.Create(databasePath))
         {
             // we could load all available gestures in the database with a call to vgbFrameSource.AddGestures(database.AvailableGestures), 
             // but for this program, we only want to track one discrete gesture from the database, so we'll load it by name
             foreach (Gesture gesture in database.AvailableGestures)
             {
-                if (gesture.Name.Equals(this.liftEarthGesture))
-                {
+                //if (gesture.Name.Equals(this.liftEarthGesture))
+                //{
                     this.vgbFrameSource.AddGesture(gesture);
-                }
+                //}
             }
         }
-        var smallArmLift_dbPath = Path.Combine(Application.streamingAssetsPath, this.armSmallLiftdb);
-        using (VisualGestureBuilderDatabase database = VisualGestureBuilderDatabase.Create(smallArmLift_dbPath))
-        {
-            // we could load all available gestures in the database with a call to vgbFrameSource.AddGestures(database.AvailableGestures), 
-            // but for this program, we only want to track one discrete gesture from the database, so we'll load it by name
-            foreach (Gesture gesture in database.AvailableGestures)
-            {
-                if (gesture.Name.Equals(this.armSmallLiftGesture))
-                {
-                    this.vgbFrameSource.AddGesture(gesture);
-                }
-            }
-        }
+        //var smallArmLift_dbPath = Path.Combine(Application.streamingAssetsPath, this.armSmallLiftdb);
+        //using (VisualGestureBuilderDatabase database = VisualGestureBuilderDatabase.Create(smallArmLift_dbPath))
+        //{
+        //    // we could load all available gestures in the database with a call to vgbFrameSource.AddGestures(database.AvailableGestures), 
+        //    // but for this program, we only want to track one discrete gesture from the database, so we'll load it by name
+        //    foreach (Gesture gesture in database.AvailableGestures)
+        //    {
+        //        if (gesture.Name.Equals(this.armSmallLiftGesture))
+        //        {
+        //            this.vgbFrameSource.AddGesture(gesture);
+        //        }
+        //    }
+        //}
     }
 
     /// <summary>
@@ -196,19 +212,17 @@ public class GestureDetector : IDisposable
                     // we only have one gesture in this source object, but you can get multiple gestures
                     foreach (Gesture gesture in this.vgbFrameSource.Gestures)
                     {
-                        if (gesture.Name.Equals(this.liftEarthGesture) && gesture.GestureType == GestureType.Discrete)
+                        if (gesture.Name.Equals(this.MP_false1Gesture) && gesture.GestureType == GestureType.Discrete)
                         {
                             DiscreteGestureResult result = null;
                             discreteResults.TryGetValue(gesture, out result);
-                            
                             if (result != null)
                             {
-                                
-                                if (result.Confidence >= .7)
+                                if (result.Confidence >= .8)
                                 {
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
-                                    KinectManager.km.shootfireball();
-                                    Debug.Log("Not small fireball");
+                                    KinectManager.km.FalseGesture1();
+                                    Debug.Log("False1: Elbow not bent");
                                 }
                                 else
                                 {
@@ -217,19 +231,17 @@ public class GestureDetector : IDisposable
                             }
                         }
                         
-                        if (gesture.Name.Equals(this.armSmallLiftGesture) && gesture.GestureType == GestureType.Discrete)
+                        if (gesture.Name.Equals(this.MP_false2Gesture) && gesture.GestureType == GestureType.Discrete)
                         {
                             DiscreteGestureResult result = null;
                             discreteResults.TryGetValue(gesture, out result);
-
                             if (result != null)
                             {
-
                                 if (result.Confidence >= .7)
                                 {
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
-                                    KinectManager.km.shootfireballMini();
-                                    Debug.Log("Small fireball");
+                                    KinectManager.km.FalseGesture2();
+                                    Debug.Log("False2: Eblow too low");
                                 }
                                 else
                                 {
@@ -237,6 +249,63 @@ public class GestureDetector : IDisposable
                                 }
                             }
                         }
+
+                        if (gesture.Name.Equals(this.MP_Level1Gesture) && gesture.GestureType == GestureType.Discrete)
+                        {
+                            DiscreteGestureResult result = null;
+                            discreteResults.TryGetValue(gesture, out result);
+                            if (result != null)
+                            {
+                                if (result.Confidence >= .9)
+                                {
+                                    this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
+                                    KinectManager.km.MP_Level1();
+                                    Debug.Log("30%");
+                                }
+                                else
+                                {
+                                    this.OnGestureDetected(this, new GestureEventArgs(false, result.Detected, result.Confidence));
+                                }
+                            }
+                        }
+                        if (gesture.Name.Equals(this.MP_Level2Gesture) && gesture.GestureType == GestureType.Discrete)
+                        {
+                            DiscreteGestureResult result = null;
+                            discreteResults.TryGetValue(gesture, out result);
+                            if (result != null)
+                            {
+                                if (result.Confidence >= .8)
+                                {
+                                    this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
+                                    KinectManager.km.MP_Level2();
+                                    Debug.Log("60%");
+                                }
+                                else
+                                {
+                                    this.OnGestureDetected(this, new GestureEventArgs(false, result.Detected, result.Confidence));
+                                }
+                            }
+                        }
+
+                        if (gesture.Name.Equals(this.MP_Level3Gesture) && gesture.GestureType == GestureType.Discrete)
+                        {
+                            DiscreteGestureResult result = null;
+                            discreteResults.TryGetValue(gesture, out result);
+                            if (result != null)
+                            {
+                                if (result.Confidence >= .8)
+                                {
+                                    this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
+                                    KinectManager.km.MP_Level3();
+                                    Debug.Log("100%");
+                                }
+                                else
+                                {
+                                    this.OnGestureDetected(this, new GestureEventArgs(false, result.Detected, result.Confidence));
+                                }
+                            }
+                        }
+
                     }
                 }
             }

@@ -4,6 +4,13 @@ using System.Collections;
 
 public class TeleportTutorial : MonoBehaviour {
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            SceneManager.LoadScene("Scenes/MainMenu");
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -16,7 +23,7 @@ public class TeleportTutorial : MonoBehaviour {
             SceneManager.LoadScene("Scenes/TutorialFireball");
         } else if (other.name == "Teleport_ShootEarth")
         {
-            SceneManager.LoadScene("Scenes/TutorialShootEarth");
+            SceneManager.LoadScene("Scenes/TutorialShootingRock");
         }
         else if(other.name == "OutsideCastle")
         {

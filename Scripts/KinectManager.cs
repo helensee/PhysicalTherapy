@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ public class KinectManager : MonoBehaviour
     private List<GestureDetector> gestureDetectorList = null;
 
     public static KinectManager km = null;
+    public Text currentGesture;
 
     // Use this for initialization
     void Start()
@@ -44,12 +46,13 @@ public class KinectManager : MonoBehaviour
         {
             km = this;
         }
+        currentGesture.text = "hello";
         // GUI color and text objects
         this.bodyColors = new UnityEngine.Color[] {
             UnityEngine.Color.red, 
             UnityEngine.Color.yellow, 
             UnityEngine.Color.green, 
-            UnityEngine.Color.blue, 
+            UnityEngine.Color.white, 
             UnityEngine.Color.cyan, 
             UnityEngine.Color.magenta
         };
@@ -91,6 +94,7 @@ public class KinectManager : MonoBehaviour
             this.kinectSensor.Open();
         }
     }
+
 
     // Update is called once per frame
     void Update()
@@ -167,6 +171,37 @@ public class KinectManager : MonoBehaviour
         Debug.Log("fireballMini");
     }
 
+    public void FalseGesture1()
+    {
+        currentGesture.text = "Bend elbow";
+    }
+
+    public void FalseGesture2()
+    {
+        currentGesture.text = "Arm's are too low, raise elbows";
+    }
+
+    public void MP_Level1()
+    {
+        currentGesture.text = "Arm raise at 30%";
+        GameObject shootFireball = Instantiate(fireballmini, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+        shootFireball.GetComponent<Rigidbody>().AddForce(transform.forward * fireballspeed);
+    }
+
+    public void MP_Level2()
+    {
+        currentGesture.text = "Arm raise at 60%";
+        GameObject shootFireball = Instantiate(fireballmini, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+        shootFireball.GetComponent<Rigidbody>().AddForce(transform.forward * fireballspeed);
+    }
+
+    public void MP_Level3()
+    {
+        currentGesture.text = "Arm raise at 100%";
+        GameObject shootFireball = Instantiate(fireballmini, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+        shootFireball.GetComponent<Rigidbody>().AddForce(transform.forward * fireballspeed);
+    }
+
     private EventHandler<GestureEventArgs> CreateOnGestureHandler(int bodyIndex)
     {
         return (object sender, GestureEventArgs e) => OnGestureDetected(sender, e, bodyIndex);
@@ -178,7 +213,6 @@ public class KinectManager : MonoBehaviour
 
         StringBuilder text = new StringBuilder(string.Format("Gesture Detected? {0}\n", isDetected));
         text.Append(string.Format("Confidence: {0}\n", e.DetectionConfidence));
-        Debug.Log("swipe right!");
         this.bodyText[bodyIndex] = text.ToString();
     }
 
@@ -193,9 +227,7 @@ public class KinectManager : MonoBehaviour
                 GUI.contentColor = this.bodyColors[i];
                 GUI.Box(new Rect(10 + ((i % NumColumns) * 145), 20 + ((i / NumColumns) * 145), 140, 140), this.bodyText[i]);
             }
-            else
-            {
-            }
+
         }
     }
 

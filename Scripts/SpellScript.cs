@@ -31,7 +31,7 @@ public class SpellScript : MonoBehaviour
 	// Update is called once per frame.
 	void Update ()
 	{
-		if (Input.GetMouseButtonDown (0) || Input.GetKeyDown("space")) {
+		if (Input.GetMouseButtonDown (0)) {
 			GameObject shootFireball = Instantiate (fireball, GameObject.Find ("Spawn").transform.position, Quaternion.identity) as GameObject;
 			shootFireball.GetComponent<Rigidbody> ().AddForce (transform.forward * fireballspeed);
 
