@@ -17,6 +17,10 @@ public class KinectManager : MonoBehaviour
     GameObject shootFireball;
     public GameObject fireballmini;
 
+    public GameObject rock;
+    GameObject shootRock;
+    public float rockSpeed;
+
     // Kinect 
     private KinectSensor kinectSensor;
     
@@ -47,6 +51,7 @@ public class KinectManager : MonoBehaviour
             km = this;
         }
         currentGesture.text = "hello";
+        Debug.Log("View text hello");
         // GUI color and text objects
         this.bodyColors = new UnityEngine.Color[] {
             UnityEngine.Color.red, 
@@ -99,6 +104,12 @@ public class KinectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(2))
+        {
+            GameObject shootRock = Instantiate(rock, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+            shootRock.GetComponent<Rigidbody>().AddForce(transform.forward * rockSpeed);
+            
+        }
         // ensure the readers are valid
         if (this.colorFrameReader != null && this.bodyFrameReader != null)
         {
@@ -168,38 +179,43 @@ public class KinectManager : MonoBehaviour
 
         fireballReady = true;
 
-        Debug.Log("fireballMini");
+        Debug.Log("fireball");
     }
 
     public void FalseGesture1()
     {
         currentGesture.text = "Bend elbow";
+        Debug.Log("KM: bend elbow...");
     }
 
     public void FalseGesture2()
     {
         currentGesture.text = "Arm's are too low, raise elbows";
+        Debug.Log("KM: arms too low...");
     }
 
     public void MP_Level1()
     {
         currentGesture.text = "Arm raise at 30%";
-        GameObject shootFireball = Instantiate(fireballmini, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
-        shootFireball.GetComponent<Rigidbody>().AddForce(transform.forward * fireballspeed);
+        GameObject shootRock = Instantiate(rock, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+        shootRock.GetComponent<Rigidbody>().AddForce(transform.forward * 1000);
+        Debug.Log("KM: 30%...");
     }
 
     public void MP_Level2()
     {
         currentGesture.text = "Arm raise at 60%";
-        GameObject shootFireball = Instantiate(fireballmini, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
-        shootFireball.GetComponent<Rigidbody>().AddForce(transform.forward * fireballspeed);
+        GameObject shootRock = Instantiate(rock, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+        shootRock.GetComponent<Rigidbody>().AddForce(transform.forward * 1500);
+        Debug.Log("KM: 60%...");
     }
 
     public void MP_Level3()
     {
         currentGesture.text = "Arm raise at 100%";
-        GameObject shootFireball = Instantiate(fireballmini, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
-        shootFireball.GetComponent<Rigidbody>().AddForce(transform.forward * fireballspeed);
+        GameObject shootRock = Instantiate(rock, GameObject.Find("Spawn").transform.position, Quaternion.identity) as GameObject;
+        shootRock.GetComponent<Rigidbody>().AddForce(transform.forward * rockSpeed);
+        Debug.Log("KM: 100%...");
     }
 
     private EventHandler<GestureEventArgs> CreateOnGestureHandler(int bodyIndex)

@@ -14,7 +14,7 @@ using System.Collections;
 
 public class GestureEventArgs : EventArgs
 {
-
+   
     
     public bool IsBodyTrackingIdValid { get; private set; }
 
@@ -220,6 +220,8 @@ public class GestureDetector : IDisposable
                             {
                                 if (result.Confidence >= .8)
                                 {
+                                    UserControl.instance.addTCData(System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-ffff"), result.Confidence, "earth_errorstraight");
+                                    
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
                                     KinectManager.km.FalseGesture1();
                                     Debug.Log("False1: Elbow not bent");
@@ -237,11 +239,16 @@ public class GestureDetector : IDisposable
                             discreteResults.TryGetValue(gesture, out result);
                             if (result != null)
                             {
+
                                 if (result.Confidence >= .7)
                                 {
+                                    
+                                   
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
                                     KinectManager.km.FalseGesture2();
                                     Debug.Log("False2: Eblow too low");
+
+                                    UserControl.instance.addTCData(System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-ffff"), result.Confidence, "earth_errorlow");
                                 }
                                 else
                                 {
@@ -258,9 +265,13 @@ public class GestureDetector : IDisposable
                             {
                                 if (result.Confidence >= .9)
                                 {
+                                    
+                                    
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
                                     KinectManager.km.MP_Level1();
                                     Debug.Log("30%");
+
+                                    UserControl.instance.addTCData(System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-ffff"), result.Confidence, "earth30");
                                 }
                                 else
                                 {
@@ -276,9 +287,13 @@ public class GestureDetector : IDisposable
                             {
                                 if (result.Confidence >= .8)
                                 {
+                              
+                                    
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
                                     KinectManager.km.MP_Level2();
                                     Debug.Log("60%");
+
+                                    UserControl.instance.addTCData(System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-ffff"), result.Confidence, "earth60");
                                 }
                                 else
                                 {
@@ -295,9 +310,12 @@ public class GestureDetector : IDisposable
                             {
                                 if (result.Confidence >= .8)
                                 {
+                                    //Debug.Log("Timestamp: " + System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-ffff") + "; Confidence: " + result.Confidence);
+                                    
                                     this.OnGestureDetected(this, new GestureEventArgs(true, result.Detected, result.Confidence));
                                     KinectManager.km.MP_Level3();
                                     Debug.Log("100%");
+                                    UserControl.instance.addTCData(System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-ffff"), result.Confidence, "earth100");
                                 }
                                 else
                                 {

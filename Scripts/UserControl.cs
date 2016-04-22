@@ -16,8 +16,9 @@ public class UserControl : MonoBehaviour {
 	public float fire_experience;
 	public float wind_experience;
 	public float water_experience;
+    public List<TCData> time_conf_data;
 
-	public static UserControl instance = null;
+    public static UserControl instance = null;
 	public List<String> userIDs = new List<String> ();
 
 	// Use this for initialization
@@ -28,6 +29,8 @@ public class UserControl : MonoBehaviour {
 		else if (instance != this)
 			Destroy (gameObject);
 
+        Debug.Log(Application.persistentDataPath);
+
         Setup();
 	}
 
@@ -36,15 +39,79 @@ public class UserControl : MonoBehaviour {
 
 	}
 
-	public int AddUser() {
+    public void addTCData(String time, float conf, String gesture)
+    {
+        Debug.Log("Adding tcdata");
+        if(time_conf_data == null)
+        {
+            Debug.Log("null in add");
+            time_conf_data = new List<TCData>();
+        }
+        else
+        {
+            Debug.Log("not null in add, size: " + time_conf_data.Count);
+        }
+        time_conf_data.Add(new TCData(time, conf, gesture));
+        Debug.Log("Calling save from adddata");
+        //Save(user_id);
+
+    }
+
+    public void printTCDataToFile(int userID)
+    {
+        Debug.Log("printing to file...");
+        if (!File.Exists(Application.persistentDataPath + "/TCDataUser" + userID + ".txt")) { 
+            FileStream file = File.Open(Application.persistentDataPath + "/TCDataUser" + userID + ".txt", FileMode.Create);
+            file.Close();
+        }
+        using (StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/TCDataUser" + userID + ".txt"))
+        {
+            Debug.Log("in sw");
+            if (time_conf_data == null)
+            {
+                Debug.Log("its null sob");
+                
+            }
+            if(time_conf_data != null)
+            {
+                Debug.Log("its not null");
+                Debug.Log(time_conf_data.Count);
+            }
+            /*
+            Debug.Log("in sw");
+            sw.WriteLine("hello world");
+            sw.WriteLine(time_conf_data.Count);
+            Debug.Log("yay");
+        */    
+        /*Debug.Log("in streamwriter, data size: " + time_conf_data.Count);
+            for(int i=0; i<time_conf_data.Count; i++)
+            {
+                TCData tcd = time_conf_data[i];
+                Debug.Log(tcd.toString());
+                sw.WriteLine(tcd.toString());
+            }*/
+        }
+
+    }
+
+    public int AddUser() {
 		String newUser = userIDs.Count + "";
 		userIDs.Add (newUser);
 		Debug.Log ("There are " + userIDs.Count + " users!");
-		Save(userIDs.Count - 1);
+		Save(userIDs.Count - 1, new List<TCData>());
 		return userIDs.Count - 1;
 	}
 
-	public void Save(int userID) {
+	public void Save(int userID, List<TCData> tcd_data) {
+        Debug.Log("saving...");
+        if (tcd_data == null)
+        {
+            Debug.Log("its null before serializing");
+        }
+        else {
+            Debug.Log("its not null before serializaing");
+            Debug.Log(time_conf_data.Count);
+        }
 		BinaryFormatter bf = new BinaryFormatter ();
 
 		//current user
@@ -59,10 +126,16 @@ public class UserControl : MonoBehaviour {
 		data.fire_experience = fire_experience;
 		data.wind_experience = wind_experience;
 		data.water_experience = water_experience;
+        data.time_conf_data = time_conf_data;
 
 		bf.Serialize (file, data);
 		file.Close ();
-
+        if (time_conf_data == null)
+        {
+            Debug.Log("its null in save");
+        }
+        else
+            Debug.Log("its not nul in save");
 		//metadata
 		FileStream file2 = File.Open (Application.persistentDataPath + "/metadata.txt", FileMode.Create);
 		Metadata meta = new Metadata ();
@@ -114,9 +187,9 @@ public class UserControl : MonoBehaviour {
 			fire_experience = data.fire_experience;
 			wind_experience = data.wind_experience;
 			water_experience = data.water_experience;
+            time_conf_data = data.time_conf_data;
 
-			
-			return true;
+            return true;
 		} else
 			return false;
 	}
@@ -133,9 +206,34 @@ class UserData {
 	public float fire_experience;
 	public float wind_experience;
 	public float water_experience;
+    public List<TCData> time_conf_data;
+
+    public UserData()
+    {
+        time_conf_data = new List<TCData>();
+    }
 }
 
 [Serializable]
 class Metadata {
 	public List<String> userIDs;
+}
+
+public class TCData
+{
+    public String timestamp;
+    public float confidence;
+    public String gesture;
+
+    public TCData(String time, float conf, String gesture)
+    {
+        timestamp = time;
+        confidence = conf;
+        this.gesture = gesture;
+    }
+
+    public String toString()
+    {
+        return "Timestamp: " + timestamp + "; Gesture: " + gesture+ "; Confidence: " + confidence;
+    }
 }
